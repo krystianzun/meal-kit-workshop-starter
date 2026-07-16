@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  turbopack: {
+    // Avoid picking a parent folder lockfile as the workspace root
+    root: process.cwd(),
+  },
 };
 
 export default nextConfig;
