@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+@theme {
+  --color-olive-300: #e8e8e3;
+  --color-olive-400: #d8d8d0;
+  --color-olive-600: #7c7c67;
+  --color-lime-500: #7ccf00;
+  --color-lime-950: #192e03;
+  --color-orange-400: #ff8904;
+  --color-orange-800: #9f2d00;
+}
+
+:root {
+  --foreground: #192e03;
+  --background: #ffffff;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@keyframes fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-step-in {
+  animation: fade-slide-in 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-step-in {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

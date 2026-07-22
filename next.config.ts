@@ -2,8 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {
-    // Avoid picking a parent folder lockfile as the workspace root
     root: process.cwd(),
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.themealdb.com",
+        pathname: "/images/**",
+      },
+    ],
   },
 };
 

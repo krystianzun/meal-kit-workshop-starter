@@ -1,0 +1,72 @@
+# YumYum — Find Your Plan
+# Content script (mirrors lib/flow-data.ts)
+# Edit here for copy review; sync changes back to flow-data.ts when final.
+
+---
+
+## Welcome
+
+Headline: Dinner decisions are hard. Let's fix that in about 60 seconds.
+
+Subhead: Answer four quick questions and we'll hand you a weekly plan that actually fits your life — no endless scrolling required.
+
+CTA: Find my plan
+
+---
+
+## Section: Your plan
+
+### Q1 — Household
+Title: Who are you cooking for most nights?
+Subtitle: Be honest — we won't judge your cereal-for-dinner era.
+
+Options:
+- Just me
+- Me and one other
+- A family with kids
+
+### Q2 — Dinners per week
+Title: How many dinners a week should we plan?
+Subtitle: We'll fill the box — you just decide how many nights to rescue.
+
+Options:
+- 2 dinners
+- 3 dinners
+- 4 dinners
+- 5 dinners
+
+### Q3 — Diet
+Title: Which best describes how you eat?
+Subtitle: No lectures — just better matches.
+
+Options:
+- I eat everything
+- Flexitarian
+- Pescatarian
+- Vegetarian
+- Vegan
+
+### Q4 — Allergies
+Title: Any allergies or ingredients you avoid?
+Subtitle: No judgment — mushrooms are divisive too.
+
+Options (multi-select):
+- Gluten
+- Dairy
+- Nuts
+- Shellfish
+- Soy
+- Eggs
+- None of these (exclusive — clears other selections)
+
+---
+
+## Results
+
+Headline: Here's your plan
+Subhead: We listened. Here's what we heard — and what we'd cook.
+
+Summary intro: What we heard
+Recipes heading: Your dinners this week
+Empty state: Hmm — that's a tricky combo. We couldn't find enough matches, but we're working on it. Try tweaking your answers?
+Restart CTA: Start over
