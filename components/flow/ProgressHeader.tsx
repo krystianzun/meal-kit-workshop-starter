@@ -1,17 +1,18 @@
 "use client";
 
 import Image from "next/image";
+import type { SectionProgressSegment } from "@/lib/flow-data";
 
 interface ProgressHeaderProps {
   sectionTitle: string;
-  fillPercent: number;
+  segments: SectionProgressSegment[];
   onBack: () => void;
   showBack?: boolean;
 }
 
 export function ProgressHeader({
   sectionTitle,
-  fillPercent,
+  segments,
   onBack,
   showBack = true,
 }: ProgressHeaderProps) {
@@ -43,13 +44,24 @@ export function ProgressHeader({
       </div>
 
       <div className="flex items-center gap-1">
-        <div className="relative h-2 flex-1 overflow-hidden bg-olive-300">
-          <div
-            className="absolute left-0 top-0 h-full bg-lime-500 transition-[width] duration-300 ease-out"
-            style={{ width: `${fillPercent}%` }}
-          />
-        </div>
-        <div className="size-3.5 shrink-0 rounded-sm bg-olive-300" />
+        {segments.map((segment, index) => (
+          <div key={segment.sectionId} className="flex flex-1 items-center gap-1">
+            <div className="relative h-2 flex-1 overflow-hidden bg-olive-300">
+              <div
+                className="absolute left-0 top-0 h-full bg-lime-500 transition-[width] duration-300 ease-out"
+                style={{ width: `${segment.fillPercent}%` }}
+              />
+            </div>
+            <div
+              className={`size-3.5 shrink-0 rounded-sm transition-colors duration-300 ${
+                segment.checkpointComplete ? "bg-lime-500" : "bg-olive-300"
+              }`}
+            />
+            {index < segments.length - 1 && (
+              <div className="w-0 shrink-0" aria-hidden />
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -6,17 +6,23 @@
 
 ## Welcome
 
-Headline: Dinner decisions are hard. Let's fix that in about 60 seconds.
+Headline: Dinner decisions are hard. Let's fix that in about two minutes.
 
-Subhead: Answer four quick questions and we'll hand you a weekly plan that actually fits your life — no endless scrolling required.
+Subhead: Three quick chapters, seven easy questions — then we hand you a weekly plan that actually fits. No endless scrolling.
 
 CTA: Find my plan
 
 ---
 
-## Section: Your plan
+## Section 1 — Your household
 
-### Q1 — Household
+### Intro
+Icon: household (Groups — people at the table)
+Headline: First up: who's at your table?
+Subhead: Two quick ones about your household — so we don't send you a family-sized lasagna when it's just you and the cat.
+CTA: Let's go
+
+### Q — Household
 Title: Who are you cooking for most nights?
 Subtitle: Be honest — we won't judge your cereal-for-dinner era.
 
@@ -25,7 +31,7 @@ Options:
 - Me and one other
 - A family with kids
 
-### Q2 — Dinners per week
+### Q — Dinners per week
 Title: How many dinners a week should we plan?
 Subtitle: We'll fill the box — you just decide how many nights to rescue.
 
@@ -35,7 +41,17 @@ Options:
 - 4 dinners
 - 5 dinners
 
-### Q3 — Diet
+---
+
+## Section 2 — How you eat
+
+### Intro
+Icon: dining (Restaurant menu)
+Headline: Now — how do you actually eat?
+Subhead: Diet, allergies, and the flavours you genuinely crave. This is where the magic happens.
+CTA: On we go
+
+### Q — Diet
 Title: Which best describes how you eat?
 Subtitle: No lectures — just better matches.
 
@@ -46,7 +62,7 @@ Options:
 - Vegetarian
 - Vegan
 
-### Q4 — Allergies
+### Q — Allergies
 Title: Any allergies or ingredients you avoid?
 Subtitle: No judgment — mushrooms are divisive too.
 
@@ -59,12 +75,54 @@ Options (multi-select):
 - Eggs
 - None of these (exclusive — clears other selections)
 
+### Q — Favourite cuisines
+Title: Which cuisines make you actually excited about dinner?
+Subtitle: Pick as many as you like — or tell us you're not picky.
+
+Options (multi-select):
+- Italian
+- Mexican
+- Asian
+- Mediterranean
+- Indian
+- American
+- I'm easy — surprise me (exclusive — clears other selections)
+
+---
+
+## Section 3 — Your goals
+
+### Intro
+Icon: goals (Flag — what you're aiming for)
+Headline: Last chapter: what are you hoping for?
+Subhead: Your goal and your time budget — so we don't suggest a 45-minute curry on a Wednesday.
+CTA: Almost there
+
+### Q — Main goal
+Title: What's your main goal right now?
+Subtitle: No wrong answers — just the one that matters most this week.
+
+Options:
+- Eat healthier
+- Spend less time on dinner
+- Get more protein
+- Become a better cook
+
+### Q — Time budget
+Title: How much time do you have on a typical weeknight?
+Subtitle: Be realistic — Tuesday-you is tired.
+
+Options:
+- About 15 minutes
+- About 30 minutes
+- 45 minutes or more
+
 ---
 
 ## Results
 
 Headline: Here's your plan
-Subhead: We listened. Here's what we heard — and what we'd cook.
+Subhead: We listened. Here's what we heard — and what we'd cook this week.
 
 Summary intro: What we heard
 Recipes heading: Your dinners this week

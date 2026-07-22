@@ -66,6 +66,7 @@ export function formatAllergySummary(answers: FlowAnswers): string {
     return "No allergies or avoids";
   }
   return raw
+    .filter((a) => a !== "none")
     .map((a) => a.charAt(0).toUpperCase() + a.slice(1))
     .join(", ");
 }

@@ -2,7 +2,9 @@
 
 import {
   canAdvance,
-  getQuestionProgress,
+  getProgressHeaderTitle,
+  getSectionsProgress,
+  isFirstProgressStep,
   showsProgressHeader,
 } from "@/lib/flow-resolver";
 import { useCurrentStep, useFlowStore } from "@/lib/flow-store";
@@ -11,6 +13,7 @@ import { NextButton } from "./NextButton";
 import { ProgressHeader } from "./ProgressHeader";
 import { QuestionScreen } from "./QuestionScreen";
 import { ResultsScreen } from "./ResultsScreen";
+import { SectionIntroScreen } from "./SectionIntroScreen";
 import { WelcomeScreen } from "./WelcomeScreen";
 
 export function FlowShell() {
@@ -26,24 +29,30 @@ export function FlowShell() {
   if (!step) return null;
 
   const isWelcome = step.kind === "welcome";
+  const isSectionIntro = step.kind === "sectionIntro";
   const isQuestion = step.kind === "question";
   const isResults = step.kind === "results";
   const showProgress = showsProgressHeader(currentStepId);
-  const progress = getQuestionProgress(currentStepId);
+  const segments = getSectionsProgress(currentStepId, answers);
+  const headerTitle = getProgressHeaderTitle(currentStepId);
   const advanceEnabled = canAdvance(step, answers);
 
   return (
     <FlowLayout wide={isWelcome}>
       {showProgress && (
         <ProgressHeader
-          sectionTitle={progress.sectionTitle}
-          fillPercent={progress.fillPercent}
+          sectionTitle={headerTitle}
+          segments={segments}
           onBack={goBack}
-          showBack={currentStepId !== "household"}
+          showBack={!isFirstProgressStep(currentStepId)}
         />
       )}
 
       {isWelcome && <WelcomeScreen step={step} onNext={goNext} />}
+
+      {isSectionIntro && (
+        <SectionIntroScreen step={step} onNext={goNext} />
+      )}
 
       {isQuestion && (
         <>
