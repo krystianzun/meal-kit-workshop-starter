@@ -5,7 +5,11 @@ import {
   type FlowAnswers,
   type ResultsStep,
 } from "@/lib/flow-data";
-import { formatAllergySummary, recommendRecipes } from "@/lib/recommend-recipes";
+import {
+  formatAllergySummary,
+  formatFamilyPickyEaterSummary,
+  recommendRecipes,
+} from "@/lib/recommend-recipes";
 import { NextButton } from "./NextButton";
 import { RecipeCard } from "./RecipeCard";
 
@@ -21,6 +25,39 @@ function summaryLines(answers: FlowAnswers): string[] {
   if (answers.household) {
     lines.push(ANSWER_LABELS.household[answers.household] ?? answers.household);
   }
+
+  // Household follow-ups — only the branch matching the household answer
+  // was ever shown, so only that branch's answers exist here.
+  if (answers.household === "just_me") {
+    if (answers.soloPortions) {
+      lines.push(ANSWER_LABELS.soloPortions[answers.soloPortions]);
+    }
+    if (answers.soloVibe) {
+      lines.push(ANSWER_LABELS.soloVibe[answers.soloVibe]);
+    }
+    if (answers.soloSetup) {
+      lines.push(ANSWER_LABELS.soloSetup[answers.soloSetup]);
+    }
+  } else if (answers.household === "couple") {
+    if (answers.coupleSync) {
+      lines.push(ANSWER_LABELS.coupleSync[answers.coupleSync]);
+    }
+    if (answers.coupleDuty) {
+      lines.push(ANSWER_LABELS.coupleDuty[answers.coupleDuty]);
+    }
+    if (answers.coupleOccasion) {
+      lines.push(ANSWER_LABELS.coupleOccasion[answers.coupleOccasion]);
+    }
+  } else if (answers.household === "family_kids") {
+    lines.push(formatFamilyPickyEaterSummary(answers));
+    if (answers.familyMealStyle) {
+      lines.push(ANSWER_LABELS.familyMealStyle[answers.familyMealStyle]);
+    }
+    if (answers.familyChaos) {
+      lines.push(ANSWER_LABELS.familyChaos[answers.familyChaos]);
+    }
+  }
+
   if (answers.dinnersPerWeek) {
     lines.push(
       ANSWER_LABELS.dinnersPerWeek[answers.dinnersPerWeek] ??

@@ -2,6 +2,7 @@ import type { FlowAnswers } from "./flow-data";
 import {
   type Allergen,
   type Base,
+  type FlavourTag,
   type Recipe,
   mealTypeOf,
   recipes,
@@ -28,6 +29,13 @@ function getSelectedAllergens(answers: FlowAnswers): Allergen[] {
   return raw.filter((a): a is Allergen => a !== "none");
 }
 
+/** Only ever set on the "family_kids" branch — the "picky eater" follow-up. */
+function getExcludedFlavourTags(answers: FlowAnswers): FlavourTag[] {
+  const raw = answers.familyPickyEater;
+  if (!raw || raw.length === 0 || raw.includes("none")) return [];
+  return raw.filter((t): t is FlavourTag => t !== "none");
+}
+
 function getDinnerLimit(answers: FlowAnswers): number {
   const n = parseInt(answers.dinnersPerWeek ?? "3", 10);
   return Number.isFinite(n) ? n : 3;
@@ -36,6 +44,7 @@ function getDinnerLimit(answers: FlowAnswers): number {
 export function recommendRecipes(answers: FlowAnswers): Recipe[] {
   const bases = allowedBases(answers.diet);
   const allergens = getSelectedAllergens(answers);
+  const excludedFlavourTags = getExcludedFlavourTags(answers);
   const limit = getDinnerLimit(answers);
 
   let pool = recipes.filter((r) => mealTypeOf(r) === "dinner");
@@ -47,6 +56,12 @@ export function recommendRecipes(answers: FlowAnswers): Recipe[] {
   if (allergens.length > 0) {
     pool = pool.filter(
       (r) => !r.allergens.some((a) => allergens.includes(a)),
+    );
+  }
+
+  if (excludedFlavourTags.length > 0) {
+    pool = pool.filter(
+      (r) => !(r.flavourTags ?? []).some((t) => excludedFlavourTags.includes(t)),
     );
   }
 
@@ -68,5 +83,16 @@ export function formatAllergySummary(answers: FlowAnswers): string {
   return raw
     .filter((a) => a !== "none")
     .map((a) => a.charAt(0).toUpperCase() + a.slice(1))
+    .join(", ");
+}
+
+export function formatFamilyPickyEaterSummary(answers: FlowAnswers): string {
+  const raw = answers.familyPickyEater;
+  if (!raw || raw.length === 0 || raw.includes("none")) {
+    return "Nothing off-limits here";
+  }
+  return raw
+    .filter((t) => t !== "none")
+    .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
     .join(", ");
 }

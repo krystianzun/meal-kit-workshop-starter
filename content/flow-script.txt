@@ -8,7 +8,7 @@
 
 Headline: Dinner decisions are hard. Let's fix that in about two minutes.
 
-Subhead: Three quick chapters, seven easy questions — then we hand you a weekly plan that actually fits. No endless scrolling.
+Subhead: Three quick chapters, a handful of easy questions — then we hand you a weekly plan that actually fits. No endless scrolling.
 
 CTA: Find my plan
 
@@ -30,6 +30,102 @@ Options:
 - Just me
 - Me and one other
 - A family with kids
+
+--- Conditional follow-ups — exactly one branch below shows, based on the
+--- Household answer above. The other two branches are skipped entirely
+--- (they don't render, and don't count toward the section's progress bar).
+
+#### Branch: Just me [Shown only if Household = "Just me"]
+
+### Q — Solo portions
+Title: Solo cooking has a secret question: what happens to the extras?
+Subtitle: There's no wrong answer. Except the one where it dies quietly in the back of the fridge.
+
+Options:
+- Batch it — leftovers all week
+- Freeze it for later
+- Small portions, no leftovers
+
+### Q — Solo vibe
+Title: When it's just you, what's dinner really about?
+Subtitle: No one's watching. Be honest.
+
+Options:
+- Treating myself properly
+- Fast, filling, done
+- Depends on the day
+
+### Q — Solo setup
+Title: Where does dinner actually happen when you're solo?
+Subtitle: We won't tell anyone if it's the couch.
+
+Options:
+- At the table, properly
+- Couch, plate on lap
+- Standing at the counter
+
+#### Branch: Me and one other [Shown only if Household = "Me and one other"]
+
+### Q — Couple sync
+Title: You two, at dinner — same wavelength, or need a translator?
+Subtitle: Be honest. We're not telling them what you picked.
+
+Options:
+- Always on the same page
+- One of us is more adventurous
+- We compromise most nights
+
+### Q — Couple duty
+Title: Who's usually holding the spatula at your place?
+Subtitle: No wrong answer — unless you're both lying.
+
+Options:
+- I mostly cook
+- They mostly cook
+- We split it evenly
+
+### Q — Couple occasion
+Title: Do your weeknights ever need to feel like a date?
+Subtitle: Some couples want candles on a Tuesday. No judgment either way.
+
+Options:
+- Sometimes — treat us
+- Nah, keep it practical
+- A bit of both
+
+#### Branch: A family with kids [Shown only if Household = "A family with kids"]
+
+### Q — Family picky eater
+Title: Every family's got a dish that came back untouched. What's the culprit at yours?
+Subtitle: Tell us what to dodge and we'll keep the peace at the table.
+[This one actually filters the recipes shown in Results — the other 8 branch questions are collected but don't affect results yet.]
+
+Options (multi-select):
+- Mushrooms
+- Olives
+- Coriander (the great divider)
+- Tofu
+- Nothing off-limits here (exclusive — clears other selections)
+
+### Q — Family meal style
+Title: Does everyone eat the same thing, or is there a 'kids' menu' happening?
+Subtitle: No shame either way — we've all been there at 6pm on a Tuesday.
+
+Options:
+- Same meal for everyone
+- Mostly the same, plus a side
+- Kids get their own thing
+
+### Q — Family chaos
+Title: What's dinner time actually like at yours?
+Subtitle: Paint us a picture.
+
+Options:
+- Calm, everyone's at the table
+- Rolling shifts, whenever hungry
+- Controlled chaos, but it works
+
+--- Branches rejoin here — everyone continues to Dinners per week. ---
 
 ### Q — Dinners per week
 Title: How many dinners a week should we plan?

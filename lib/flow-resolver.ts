@@ -25,15 +25,18 @@ function isSectionVisible(sectionId: string, answers: FlowAnswers): boolean {
   return true;
 }
 
-/** Ordered steps visible for the current answers (supports future conditionals). */
+/** Ordered steps visible for the current answers (any step can declare `when`). */
 export function resolveVisibleSteps(answers: FlowAnswers): FlowStep[] {
   return FLOW_STEPS.filter((step) => {
-    if (step.kind === "welcome" || step.kind === "results") return true;
-    if (step.kind === "sectionIntro") {
-      return isSectionVisible(step.sectionId, answers);
-    }
     if (step.kind === "question") return isQuestionVisible(step, answers);
-    return true;
+
+    if (step.kind === "sectionIntro") {
+      if (!isSectionVisible(step.sectionId, answers)) return false;
+      return !step.when || step.when(answers);
+    }
+
+    // welcome / results — no section to check, just their own `when`
+    return !step.when || step.when(answers);
   });
 }
 
@@ -87,12 +90,21 @@ export function showsProgressHeader(stepId: StepId): boolean {
   );
 }
 
-function questionIdsInSection(sectionId: string): QuestionId[] {
+/** Question ids in a section that are actually visible for these answers —
+ *  excludes conditional branch questions that don't apply to this user, so
+ *  progress-bar fractions are computed against the questions they'll really see. */
+function questionIdsInSection(
+  sectionId: string,
+  answers: FlowAnswers,
+): QuestionId[] {
   const section = FLOW_SECTIONS.find((s) => s.id === sectionId);
   if (!section) return [];
-  return section.stepIds.filter(
-    (id): id is QuestionId => !id.startsWith("intro-"),
-  );
+  return section.stepIds
+    .filter((id): id is QuestionId => !id.startsWith("intro-"))
+    .filter((id) => {
+      const step = FLOW_STEPS.find((s) => s.id === id);
+      return step?.kind === "question" ? isQuestionVisible(step, answers) : true;
+    });
 }
 
 function globalStepIndex(stepId: StepId, answers: FlowAnswers): number {
@@ -117,7 +129,7 @@ export function getSectionsProgress(
     isSectionVisible(section.id, answers),
   ).map((section) => {
     const sectionStepIds = section.stepIds;
-    const questions = questionIdsInSection(section.id);
+    const questions = questionIdsInSection(section.id, answers);
     const questionCount = questions.length;
 
     const firstSectionGlobalIdx = globalStepIndex(sectionStepIds[0], answers);

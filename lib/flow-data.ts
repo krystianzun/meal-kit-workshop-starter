@@ -3,6 +3,7 @@ import {
   CUISINE_LABELS,
   type Allergen,
   type Cuisine,
+  type FlavourTag,
 } from "./recipes";
 
 // ---------------------------------------------------------------------------
@@ -16,7 +17,16 @@ export type QuestionId =
   | "allergies"
   | "cuisines"
   | "mainGoal"
-  | "timeBudget";
+  | "timeBudget"
+  | "soloPortions"
+  | "soloVibe"
+  | "soloSetup"
+  | "coupleSync"
+  | "coupleDuty"
+  | "coupleOccasion"
+  | "familyPickyEater"
+  | "familyMealStyle"
+  | "familyChaos";
 
 export type SectionIntroId =
   | "intro-household"
@@ -41,6 +51,22 @@ export type MainGoalAnswer =
   | "better_cook";
 export type TimeBudgetAnswer = "15" | "30" | "45_plus";
 
+// Household follow-ups — conditional on the household answer (see `when` below)
+export type SoloPortionsAnswer = "batch" | "freeze" | "small_portions";
+export type SoloVibeAnswer = "treat_myself" | "fast_and_done" | "depends";
+export type SoloSetupAnswer = "table" | "couch" | "counter";
+
+export type CoupleSyncAnswer = "same_page" | "one_adventurous" | "compromise";
+export type CoupleDutyAnswer = "i_cook" | "they_cook" | "we_split";
+export type CoupleOccasionAnswer = "sometimes" | "practical" | "bit_of_both";
+
+export type FamilyPickyAnswer = FlavourTag | "none";
+export type FamilyMealStyleAnswer =
+  | "same_meal"
+  | "side_option"
+  | "separate_kids_meal";
+export type FamilyChaosAnswer = "calm" | "rolling_shifts" | "controlled_chaos";
+
 export type FlowAnswers = {
   household?: HouseholdAnswer;
   dinnersPerWeek?: DinnersPerWeekAnswer;
@@ -49,6 +75,15 @@ export type FlowAnswers = {
   cuisines?: CuisineAnswer[];
   mainGoal?: MainGoalAnswer;
   timeBudget?: TimeBudgetAnswer;
+  soloPortions?: SoloPortionsAnswer;
+  soloVibe?: SoloVibeAnswer;
+  soloSetup?: SoloSetupAnswer;
+  coupleSync?: CoupleSyncAnswer;
+  coupleDuty?: CoupleDutyAnswer;
+  coupleOccasion?: CoupleOccasionAnswer;
+  familyPickyEater?: FamilyPickyAnswer[];
+  familyMealStyle?: FamilyMealStyleAnswer;
+  familyChaos?: FamilyChaosAnswer;
 };
 
 // ---------------------------------------------------------------------------
@@ -85,6 +120,7 @@ export type WelcomeStep = {
   cta: string;
   imageSrc: string;
   imageAlt: string;
+  when?: (answers: FlowAnswers) => boolean;
 };
 
 /** Icon key — mapped to MUI icons in SectionIntroIcon.tsx */
@@ -98,6 +134,7 @@ export type SectionIntroStep = {
   headline: string;
   subhead: string;
   cta: string;
+  when?: (answers: FlowAnswers) => boolean;
 };
 
 export type QuestionStep = {
@@ -109,6 +146,7 @@ export type QuestionStep = {
   selection: "single" | "multi";
   options: FlowOption[];
   exclusiveOptionId?: string;
+  /** Any step can declare a condition on earlier answers — only appears when this returns true. */
   when?: (answers: FlowAnswers) => boolean;
 };
 
@@ -121,6 +159,7 @@ export type ResultsStep = {
   recipesHeading: string;
   emptyState: string;
   restartCta: string;
+  when?: (answers: FlowAnswers) => boolean;
 };
 
 export type FlowStep =
@@ -132,6 +171,13 @@ export type FlowStep =
 export type StepId = FlowStep["id"];
 
 // ---------------------------------------------------------------------------
+// Conditional-logic helpers — keep branch conditions readable in FLOW_STEPS
+// ---------------------------------------------------------------------------
+
+const whenHousehold = (value: HouseholdAnswer) => (answers: FlowAnswers) =>
+  answers.household === value;
+
+// ---------------------------------------------------------------------------
 // Sections
 // ---------------------------------------------------------------------------
 
@@ -139,7 +185,20 @@ export const FLOW_SECTIONS: FlowSection[] = [
   {
     id: "household",
     title: "Your household",
-    stepIds: ["intro-household", "household", "dinnersPerWeek"],
+    stepIds: [
+      "intro-household",
+      "household",
+      "soloPortions",
+      "soloVibe",
+      "soloSetup",
+      "coupleSync",
+      "coupleDuty",
+      "coupleOccasion",
+      "familyPickyEater",
+      "familyMealStyle",
+      "familyChaos",
+      "dinnersPerWeek",
+    ],
   },
   {
     id: "how-you-eat",
@@ -168,13 +227,20 @@ const CUISINE_OPTIONS: FlowOption[] = (
   Object.entries(CUISINE_LABELS) as [Cuisine, string][]
 ).map(([value, label]) => ({ value, label }));
 
+const FLAVOUR_TAG_OPTIONS: FlowOption[] = [
+  { value: "mushrooms", label: "Mushrooms" },
+  { value: "olives", label: "Olives" },
+  { value: "coriander", label: "Coriander" },
+  { value: "tofu", label: "Tofu" },
+];
+
 export const FLOW_STEPS: FlowStep[] = [
   {
     kind: "welcome",
     id: "welcome",
     headline: "Dinner decisions are hard. Let's fix that in about two minutes.",
     subhead:
-      "Three quick chapters, seven easy questions — then we hand you a weekly plan that actually fits. No endless scrolling.",
+      "Three quick chapters, a handful of easy questions — then we hand you a weekly plan that actually fits. No endless scrolling.",
     cta: "Find my plan",
     imageSrc: "/welcome-hero.jpg",
     imageAlt: "Colourful meal-kit ingredients laid out on a kitchen counter",
@@ -203,6 +269,143 @@ export const FLOW_STEPS: FlowStep[] = [
       { value: "family_kids", label: "A family with kids" },
     ],
   },
+
+  // --- Solo follow-ups (household = "just_me") ------------------------------
+  {
+    kind: "question",
+    id: "soloPortions",
+    sectionId: "household",
+    title: "Solo cooking has a secret question: what happens to the extras?",
+    subtitle:
+      "There's no wrong answer. Except the one where it dies quietly in the back of the fridge.",
+    selection: "single",
+    when: whenHousehold("just_me"),
+    options: [
+      { value: "batch", label: "Batch it — leftovers all week" },
+      { value: "freeze", label: "Freeze it for later" },
+      { value: "small_portions", label: "Small portions, no leftovers" },
+    ],
+  },
+  {
+    kind: "question",
+    id: "soloVibe",
+    sectionId: "household",
+    title: "When it's just you, what's dinner really about?",
+    subtitle: "No one's watching. Be honest.",
+    selection: "single",
+    when: whenHousehold("just_me"),
+    options: [
+      { value: "treat_myself", label: "Treating myself properly" },
+      { value: "fast_and_done", label: "Fast, filling, done" },
+      { value: "depends", label: "Depends on the day" },
+    ],
+  },
+  {
+    kind: "question",
+    id: "soloSetup",
+    sectionId: "household",
+    title: "Where does dinner actually happen when you're solo?",
+    subtitle: "We won't tell anyone if it's the couch.",
+    selection: "single",
+    when: whenHousehold("just_me"),
+    options: [
+      { value: "table", label: "At the table, properly" },
+      { value: "couch", label: "Couch, plate on lap" },
+      { value: "counter", label: "Standing at the counter" },
+    ],
+  },
+
+  // --- Couple follow-ups (household = "couple") ------------------------------
+  {
+    kind: "question",
+    id: "coupleSync",
+    sectionId: "household",
+    title: "You two, at dinner — same wavelength, or need a translator?",
+    subtitle: "Be honest. We're not telling them what you picked.",
+    selection: "single",
+    when: whenHousehold("couple"),
+    options: [
+      { value: "same_page", label: "Always on the same page" },
+      { value: "one_adventurous", label: "One of us is more adventurous" },
+      { value: "compromise", label: "We compromise most nights" },
+    ],
+  },
+  {
+    kind: "question",
+    id: "coupleDuty",
+    sectionId: "household",
+    title: "Who's usually holding the spatula at your place?",
+    subtitle: "No wrong answer — unless you're both lying.",
+    selection: "single",
+    when: whenHousehold("couple"),
+    options: [
+      { value: "i_cook", label: "I mostly cook" },
+      { value: "they_cook", label: "They mostly cook" },
+      { value: "we_split", label: "We split it evenly" },
+    ],
+  },
+  {
+    kind: "question",
+    id: "coupleOccasion",
+    sectionId: "household",
+    title: "Do your weeknights ever need to feel like a date?",
+    subtitle:
+      "Some couples want candles on a Tuesday. No judgment either way.",
+    selection: "single",
+    when: whenHousehold("couple"),
+    options: [
+      { value: "sometimes", label: "Sometimes — treat us" },
+      { value: "practical", label: "Nah, keep it practical" },
+      { value: "bit_of_both", label: "A bit of both" },
+    ],
+  },
+
+  // --- Family follow-ups (household = "family_kids") -------------------------
+  {
+    kind: "question",
+    id: "familyPickyEater",
+    sectionId: "household",
+    title:
+      "Every family's got a dish that came back untouched. What's the culprit at yours?",
+    subtitle: "Tell us what to dodge and we'll keep the peace at the table.",
+    selection: "multi",
+    exclusiveOptionId: "none",
+    when: whenHousehold("family_kids"),
+    options: [
+      ...FLAVOUR_TAG_OPTIONS,
+      { value: "none", label: "Nothing off-limits here" },
+    ],
+  },
+  {
+    kind: "question",
+    id: "familyMealStyle",
+    sectionId: "household",
+    title:
+      "Does everyone eat the same thing, or is there a 'kids' menu' happening?",
+    subtitle: "No shame either way — we've all been there at 6pm on a Tuesday.",
+    selection: "single",
+    when: whenHousehold("family_kids"),
+    options: [
+      { value: "same_meal", label: "Same meal for everyone" },
+      { value: "side_option", label: "Mostly the same, plus a side" },
+      { value: "separate_kids_meal", label: "Kids get their own thing" },
+    ],
+  },
+  {
+    kind: "question",
+    id: "familyChaos",
+    sectionId: "household",
+    title: "What's dinner time actually like at yours?",
+    subtitle: "Paint us a picture.",
+    selection: "single",
+    when: whenHousehold("family_kids"),
+    options: [
+      { value: "calm", label: "Calm, everyone's at the table" },
+      { value: "rolling_shifts", label: "Rolling shifts, whenever hungry" },
+      { value: "controlled_chaos", label: "Controlled chaos, but it works" },
+    ],
+  },
+
   {
     kind: "question",
     id: "dinnersPerWeek",
@@ -392,5 +595,52 @@ export const ANSWER_LABELS: Record<QuestionId, Record<string, string>> = {
     "15": "About 15 minutes",
     "30": "About 30 minutes",
     "45_plus": "45 minutes or more",
+  },
+  soloPortions: {
+    batch: "Batch it — leftovers all week",
+    freeze: "Freeze it for later",
+    small_portions: "Small portions, no leftovers",
+  },
+  soloVibe: {
+    treat_myself: "Treating myself properly",
+    fast_and_done: "Fast, filling, done",
+    depends: "Depends on the day",
+  },
+  soloSetup: {
+    table: "At the table, properly",
+    couch: "Couch, plate on lap",
+    counter: "Standing at the counter",
+  },
+  coupleSync: {
+    same_page: "Always on the same page",
+    one_adventurous: "One of us is more adventurous",
+    compromise: "We compromise most nights",
+  },
+  coupleDuty: {
+    i_cook: "I mostly cook",
+    they_cook: "They mostly cook",
+    we_split: "We split it evenly",
+  },
+  coupleOccasion: {
+    sometimes: "Sometimes — treat us",
+    practical: "Nah, keep it practical",
+    bit_of_both: "A bit of both",
+  },
+  familyPickyEater: {
+    none: "Nothing off-limits here",
+    mushrooms: "Mushrooms",
+    olives: "Olives",
+    coriander: "Coriander",
+    tofu: "Tofu",
+  },
+  familyMealStyle: {
+    same_meal: "Same meal for everyone",
+    side_option: "Mostly the same, plus a side",
+    separate_kids_meal: "Kids get their own thing",
+  },
+  familyChaos: {
+    calm: "Calm, everyone's at the table",
+    rolling_shifts: "Rolling shifts, whenever hungry",
+    controlled_chaos: "Controlled chaos, but it works",
   },
 };
